@@ -1,23 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Search from "./Components/Search";
+import PolicyDetails from "./Components/PolicyDetails";
+import React, { useEffect, useState } from "react";
 
 function App() {
+  const [data, setData] = useState([]);
+  /*   const [policyId, setPolicyId] = useState("");
+  const [customerId, setCustomerId] = useState(""); */
+  const [policy, setPolicy] = useState("");
+
+  useEffect(() => {
+    fetch("/getdata", {
+      method: "GET",
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((input) => {
+        setData(input.data);
+      });
+  }, []);
+
+  let PolicyValue = (event) => {
+    let p_id = event.target.value;
+    let policyFound = "";
+
+    if (event.target.id === "customer") {
+      /*  setCustomerId(p_id); */
+      policyFound = data.filter((element) => element.Customer_id == p_id);
+    } else if (event.target.id === "policy") {
+      /* setPolicyId(p_id); */
+      policyFound = data.filter((element) => element.Policy_id === p_id);
+    }
+
+    setPolicy(policyFound);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Search PolicyValue={PolicyValue} />
+      <PolicyDetails policy={policy} />
     </div>
   );
 }
